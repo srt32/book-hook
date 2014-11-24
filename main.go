@@ -14,12 +14,16 @@ import (
 func main() {
 	loadEnv()
 
+	n := negroni.Classic()
+	n.UseHandler(Handlers())
+	n.Run(":" + os.Getenv("PORT"))
+}
+
+func Handlers() *http.ServeMux {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/purchase", newPurchase)
 
-	n := negroni.Classic()
-	n.UseHandler(mux)
-	n.Run(":" + os.Getenv("PORT"))
+	return mux
 }
 
 func newPurchase(w http.ResponseWriter, req *http.Request) {
@@ -48,7 +52,7 @@ func newPurchase(w http.ResponseWriter, req *http.Request) {
 
 type Purchase struct {
 	UserName  string `json:"email"`
-	ProductId int    `json:"full_name"`
+	ProductId int    `json:"product_id"`
 }
 
 func addUserToTeam(UserName string, teamId int) error {
